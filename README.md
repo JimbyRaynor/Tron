@@ -1,2 +1,2 @@
 # Tron
-Tron games from the 1980s
+Tron game from the 1980s
