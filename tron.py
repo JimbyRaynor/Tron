@@ -48,13 +48,13 @@ def mykey(event):
     if event.char == "i":
         dy2 = -1
         dx2 = 0
-    if event.char == "k":
+    if event.char == "l":
         dy2 = 0
         dx2 = 1
     if event.char == "j":
         dy2 = 0
         dx2 = -1
-    if event.char == "m":
+    if event.char == "k":
         dy2 = 1
         dx2 = 0
 
