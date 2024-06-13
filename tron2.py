@@ -1,10 +1,13 @@
 from tkinter import *
+import random
 
 mainwin = Tk(className=" TRON")
 
 mainwin.geometry("800x680")
 player1colour = "#A0A0FF"
 player2colour = "#FFA0A0"
+
+AIcolour = "#0000FF"
 
 # playground
 canvas1= Canvas(mainwin,width=800,height=600, bg = "black")
@@ -32,14 +35,20 @@ printscr("Score: 0",560,49,player2colour)
 player1alive = True
 x1 = 50 # player 1 x-location
 y1 = 50 # player 1 y-location 
-dx1 = 0 # x1 speed
-dy1 = 1 # y1 speed
+dx1 = 0 # player 1 x-speed
+dy1 = 1 # player 1 y-speed
 
 player2alive = True
 x2 = 150 # player 2 x-location
-y2 = 50 # player 2 y-location
-dx2 = 0 # x2 speed
-dy2 = 1 # y2 speed
+y2 = 50  # player 2 y-location
+dx2 = 0  # player 2 x-speed
+dy2 = 1  # player 2 y-speed
+
+AIalive = True
+xai = 100  # AI x-location
+yai = 50   # AI y-location
+dxai = 0   # AI x speed
+dyai = 1   # AI y speed
 
 
 
@@ -78,6 +87,37 @@ def mykey(event):
         dy2 = 1
         dx2 = 0
 
+def goclearAI():
+    global dxai, dyai
+    dxai = 0
+    dyai = 0
+    godirections = []
+    if grid[xai+2][yai] == 0:
+        godirections.append("right")
+    elif grid[xai-2][yai] == 0:
+        godirections.append("left")
+    elif grid[xai][yai+2] == 0:
+        godirections.append("down")
+    elif grid[xai][yai-2] == 0:
+        godirections.append("up")
+    if godirections == []:
+       AIalive = False
+    else:
+      go = random.choice(godirections)
+      if go == "right": dxai = 1
+      elif go == "left": dxai = -1
+      elif go == "up": dyai = -1
+      elif go == "down": dyai = 1
+    
+
+def controlAI():
+    global dxai, dyai
+    if grid[xai+2*dxai][yai+2*dyai] == 1:
+        goclearAI()
+    elif random.randint(1,10) == 7:
+        goclearAI()
+        
+
 
 def drawdot(x,y,colour):
     global grid
@@ -93,19 +133,26 @@ def drawline(x,y,dx,dy,n,colour):
 mainwin.bind("<Key>", mykey)
 
 def timerupdate():
-    global x1,x2,y1,y2, player1alive, player2alive
+    global x1,x2,y1,y2,xai,yai, player1alive, player2alive, AIalive
+    controlAI()
     if player1alive:
       x1 = x1 + dx1
       y1 = y1 + dy1
     if player2alive:
       x2 = x2 + dx2
       y2 = y2 + dy2
+    if AIalive:
+      xai = xai + dxai
+      yai = yai + dyai
     if grid[x1][y1] == 1:
        player1alive = False
     if grid[x2][y2] == 1:
        player2alive = False
+    if grid[xai][yai] == 1:
+       AIalive = False  
     drawdot(x1,y1,player1colour)
     drawdot(x2,y2,player2colour)
+    drawdot(xai,yai,AIcolour)
     mainwin.after(100,timerupdate)
 
 
