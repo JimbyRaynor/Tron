@@ -92,13 +92,13 @@ def goclearAI():
     dxai = 0
     dyai = 0
     godirections = []
-    if grid[xai+2][yai] == 0:
+    if grid[xai+1][yai] == 0:
         godirections.append("right")
-    elif grid[xai-2][yai] == 0:
+    if grid[xai-1][yai] == 0:
         godirections.append("left")
-    elif grid[xai][yai+2] == 0:
+    if grid[xai][yai+1] == 0:
         godirections.append("down")
-    elif grid[xai][yai-2] == 0:
+    if grid[xai][yai-1] == 0:
         godirections.append("up")
     if godirections == []:
        AIalive = False
@@ -111,10 +111,10 @@ def goclearAI():
     
 
 def controlAI():
-    global dxai, dyai
-    if grid[xai+2*dxai][yai+2*dyai] == 1:
-        goclearAI()
-    elif random.randint(1,10) == 7:
+    if grid[xai+dxai][yai+dyai] == 1:
+        if random.randint(1,100) > 7 : # turn to avoid wall
+           goclearAI()
+    elif random.randint(1,100) > 92: # make a random turn
         goclearAI()
         
 
