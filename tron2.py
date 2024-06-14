@@ -1,5 +1,7 @@
 from tkinter import *
 import random
+import os
+import time
 
 mainwin = Tk(className=" TRON")
 
@@ -50,7 +52,29 @@ yai = 50   # AI y-location
 dxai = 0   # AI x speed
 dyai = 1   # AI y speed
 
-
+def startagain():
+    global x1,y1,dx1,dy1,x2,y2,dx2,dy2,xai,yai,dxai,dyai
+    global player1alive, player2alive, AIalive
+    if AIalive:
+            print("AI wins!")
+    player1alive = True
+    x1 = 50 
+    y1 = 50 
+    dx1 = 0 
+    dy1 = 1
+    player2alive = True
+    x2 = 150 # player 2 x-location
+    y2 = 50  # player 2 y-location
+    dx2 = 0  # player 2 x-speed
+    dy2 = 1  # player 2 y-speed
+    AIalive = True
+    xai = 100  # AI x-location
+    yai = 50   # AI y-location
+    dxai = 0   # AI x speed
+    dyai = 1   # AI y speed
+    canvas1.delete("all")
+    cleargrid()
+    drawwalls()
 
 grid = []  # playfield, 500 by 500
 for i in range(500):
@@ -58,6 +82,12 @@ for i in range(500):
     for j in range(500):
         L.append(0)
     grid.append(L)
+
+def cleargrid():
+    global grid
+    for i in range(500):
+      for j in range(500):
+          grid[i][j] = 0
 
 
 def mykey(event):
@@ -87,8 +117,21 @@ def mykey(event):
         dy2 = 1
         dx2 = 0
 
+def explosion(x,y):
+    drawdot(x,y, "black")
+    for i in range(100):
+        ex = random.randint(-4,4)
+        ey = random.randint(-4,4)
+        drawdot(x+ex,y+ey, "black")
+    for i in range(3):
+        ex = random.randint(-3,3)
+        ey = random.randint(-3,3)
+        drawdot(x+ex,y+ey, "white")
+    canvas1.update()
+    time.sleep(0.1)
+
 def goclearAI():
-    global dxai, dyai
+    global dxai, dyai, AIalive
     dxai = 0
     dyai = 0
     godirections = []
@@ -101,6 +144,8 @@ def goclearAI():
     if grid[xai][yai-1] == 0:
         godirections.append("up")
     if godirections == []:
+       if AIalive:
+            explosion(xai,yai)
        AIalive = False
     else:
       go = random.choice(godirections)
@@ -112,7 +157,7 @@ def goclearAI():
 
 def controlAI():
     if grid[xai+dxai][yai+dyai] == 1:
-        if random.randint(1,100) > 7 : # turn to avoid wall
+        if random.randint(1,100) > 40 : # turn to avoid wall
            goclearAI()
     elif random.randint(1,100) > 92: # make a random turn
         goclearAI()
@@ -121,7 +166,10 @@ def controlAI():
 
 def drawdot(x,y,colour):
     global grid
-    grid[x][y] = 1
+    if colour == "black":
+      grid[x][y] = 0
+    else:
+      grid[x][y] = 1
     canvas1.create_line(x*4,y*4,x*4+4,y*4,width=4,fill=colour)
 
 
@@ -145,23 +193,36 @@ def timerupdate():
       xai = xai + dxai
       yai = yai + dyai
     if grid[x1][y1] == 1:
-       player1alive = False
+       if player1alive:
+            explosion(x1,y1) 
+       player1alive = False  
     if grid[x2][y2] == 1:
+       if player2alive:
+            explosion(x2,y2) 
        player2alive = False
     if grid[xai][yai] == 1:
-       AIalive = False  
-    drawdot(x1,y1,player1colour)
-    drawdot(x2,y2,player2colour)
-    drawdot(xai,yai,AIcolour)
+       if AIalive:
+            explosion(xai,yai)
+       AIalive = False
+    if player1alive:
+       drawdot(x1,y1,player1colour)
+    if player2alive: 
+       drawdot(x2,y2,player2colour)
+    if AIalive:  
+       drawdot(xai,yai,AIcolour)
+    alivecount = sum([player1alive, player2alive, AIalive])
+    if alivecount <= 1:
+        startagain()
     mainwin.after(100,timerupdate)
 
 
-# drawwalls
-drawline(0,1,1,0,200,"grey")
-drawline(199,1,0,1,150,"grey")
-drawline(199,150,-1,0,200,"grey")
-drawline(0,150,0,-1,150,"grey")
+def drawwalls():
+   drawline(0,1,1,0,200,"grey")
+   drawline(199,1,0,1,150,"grey")
+   drawline(199,150,-1,0,200,"grey")
+   drawline(0,150,0,-1,150,"grey")
 
-
+drawwalls()
+    
 mainwin.after(100,timerupdate)
 mainwin.mainloop()
