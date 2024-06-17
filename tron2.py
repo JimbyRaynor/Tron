@@ -23,15 +23,12 @@ canvas2.place(x=0,y=600)
 canvastext= Canvas(mainwin,width=784,height=64, bg = "black")
 canvastext.place(x=6,y=607)
 font1 = ("Arial",16,"bold")
+fontBIG = ("Arial",64,"bold") 
 def printscr(mytext,x,y,mycolour):
     canvastext.create_text(x,y,text=mytext, fill=mycolour,font=font1, anchor="sw") 
 
-
-printscr("Player 1 keyboard controls: w, a, s, d",10,24,player1colour)
-printscr("Score: 0",160,49,player1colour)
-printscr("Player 2 keyboard controls: i, j, k, l",420,24,player2colour)
-printscr("Score: 0",560,49,player2colour)
-
+def printBIG(mytext,x,y,mycolour):
+    canvas1.create_text(x,y,text=mytext, fill=mycolour,font=fontBIG, anchor="sw") 
 
 
 player1alive = True
@@ -39,12 +36,14 @@ x1 = 50 # player 1 x-location
 y1 = 50 # player 1 y-location 
 dx1 = 0 # player 1 x-speed
 dy1 = 1 # player 1 y-speed
+score1 = 0 # player 1 score
 
 player2alive = True
 x2 = 150 # player 2 x-location
 y2 = 50  # player 2 y-location
 dx2 = 0  # player 2 x-speed
 dy2 = 1  # player 2 y-speed
+score2 = 0 # player 2 score
 
 AIalive = True
 xai = 100  # AI x-location
@@ -52,11 +51,31 @@ yai = 50   # AI y-location
 dxai = 0   # AI x speed
 dyai = 1   # AI y speed
 
+def printscores():
+    printscr("Player 1 keyboard controls: w, a, s, d",10,24,player1colour)
+    printscr("Score: "+str(score1),160,49,player1colour)
+    printscr("Player 2 keyboard controls: i, j, k, l",420,24,player2colour)
+    printscr("Score: "+str(score2),560,49,player2colour)
+
+printscores()
+
 def startagain():
     global x1,y1,dx1,dy1,x2,y2,dx2,dy2,xai,yai,dxai,dyai
     global player1alive, player2alive, AIalive
+    global score1, score2
     if AIalive:
-            print("AI wins!")
+            printBIG("AI wins!!!",200,200,"yellow")
+    if player1alive:
+        score1 = score1 + 1
+        printBIG("Player 1 wins!!!",100,200,"yellow")
+    if player2alive:
+        score2 = score2 + 1
+        printBIG("Player 2 wins!!!",100,200,"yellow")
+    canvastext.delete("all")
+    printscores()
+    canvastext.update()
+    canvas1.update()
+    time.sleep(2)
     player1alive = True
     x1 = 50 
     y1 = 50 
